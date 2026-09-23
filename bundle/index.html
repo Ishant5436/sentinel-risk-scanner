@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sentinel Web3 Risk Scanner</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <img src="icon.svg" alt="Sentinel Icon" class="app-icon">
+      <div class="brand-title">Sentinel Web3 Risk Scanner</div>
+      <span class="brand-badge">EVM SEC v2.4</span>
+    </div>
+    <div class="status-badge" id="host-status">
+      <span class="status-dot"></span>
+      <span id="host-label">Connecting...</span>
+    </div>
+  </header>
+
+  <!-- Metric Ribbon -->
+  <section class="metric-ribbon">
+    <div class="metric-pill">
+      <div class="label">Inspected Txs</div>
+      <div class="value" id="ribbon-txs">41,829</div>
+    </div>
+    <div class="metric-pill">
+      <div class="label">Threats Blocked</div>
+      <div class="value text-warning" id="ribbon-threats">142</div>
+    </div>
+    <div class="metric-pill">
+      <div class="label">Gas Protected</div>
+      <div class="value text-success" id="ribbon-gas">$12,480.50</div>
+    </div>
+    <div class="metric-pill">
+      <div class="label">Superchain Coverage</div>
+      <div class="value" id="ribbon-coverage">4 Networks</div>
+    </div>
+  </section>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-navigation">
+    <button class="tab-btn active" data-tab="tab-calldata">Calldata Inspector</button>
+    <button class="tab-btn" data-tab="tab-token">Token Safety Audit</button>
+    <button class="tab-btn" data-tab="tab-revert">Revert Diagnostics</button>
+    <button class="tab-btn" data-tab="tab-telemetry">Security Telemetry</button>
+  </nav>
+
+  <!-- View 1: Calldata Inspector -->
+  <main class="view-panel active" id="tab-calldata">
+    <div class="panel-header">
+      <div class="panel-title">Pre-Execution Calldata Threat Analysis</div>
+      <div class="panel-controls">
+        <button class="action-btn" id="btn-scan-calldata">Scan Calldata</button>
+      </div>
+    </div>
+    <div class="input-form">
+      <div class="form-group">
+        <label>Contract Destination Address</label>
+        <input type="text" id="input-to-address" value="0x4200000000000000000000000000000000000006" placeholder="0x..." />
+      </div>
+      <div class="form-group">
+        <label>Raw Calldata Hex</label>
+        <textarea id="input-calldata" rows="3" placeholder="0x095ea7b3...">0x095ea7b30000000000000000000000001111111111111111111111111111111111111111ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</textarea>
+      </div>
+    </div>
+    <div class="result-box" id="calldata-result">
+      <!-- Populated by app.js -->
+    </div>
+  </main>
+
+  <!-- View 2: Token Safety Audit -->
+  <main class="view-panel" id="tab-token">
+    <div class="panel-header">
+      <div class="panel-title">Honeypot, Blacklist & Privilege Audit</div>
+      <div class="panel-controls">
+        <button class="action-btn" id="btn-audit-token">Audit Token</button>
+      </div>
+    </div>
+    <div class="input-form">
+      <div class="form-group">
+        <label>ERC-20 Token Address</label>
+        <input type="text" id="input-token-address" value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" placeholder="0x..." />
+      </div>
+      <div class="form-group">
+        <label>Network</label>
+        <select id="select-chain">
+          <option value="base">Base Mainnet</option>
+          <option value="ethereum">Ethereum Mainnet</option>
+          <option value="optimism">Optimism Superchain</option>
+          <option value="arbitrum">Arbitrum One</option>
+        </select>
+      </div>
+    </div>
+    <div class="result-box" id="token-result">
+      <!-- Populated by app.js -->
+    </div>
+  </main>
+
+  <!-- View 3: Revert Diagnostics -->
+  <main class="view-panel" id="tab-revert">
+    <div class="panel-header">
+      <div class="panel-title">EVM Panic & Custom Error Translator</div>
+      <div class="panel-controls">
+        <button class="action-btn" id="btn-explain-revert">Decode Revert</button>
+      </div>
+    </div>
+    <div class="input-form">
+      <div class="form-group">
+        <label>Raw Revert Return Data (Hex)</label>
+        <input type="text" id="input-error-data" value="0x4e487b710000000000000000000000000000000000000000000000000000000000000011" placeholder="0x4e487b71..." />
+      </div>
+    </div>
+    <div class="result-box" id="revert-result">
+      <!-- Populated by app.js -->
+    </div>
+  </main>
+
+  <!-- View 4: Security Telemetry -->
+  <main class="view-panel" id="tab-telemetry">
+    <div class="panel-header">
+      <div class="panel-title">Active Security Daemon Status</div>
+      <div class="panel-controls">
+        <button class="action-btn" id="btn-refresh-telemetry">Refresh Telemetry</button>
+      </div>
+    </div>
+    <div class="telemetry-grid" id="telemetry-content">
+      <!-- Populated by app.js -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-note">Deterministic Safety Standards &middot; Bounded Pre-Execution Interception</div>
+  </footer>
+
+  <script src="anna-tool-ids.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

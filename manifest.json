@@ -1,0 +1,37 @@
+{
+  "schema": 2,
+  "required_executas": [
+    {
+      "tool_id": "tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94"
+    }
+  ],
+  "tags": ["security", "web3", "evm", "scanner", "audit"],
+  "ui": {
+    "bundle": {
+      "format": "static-spa",
+      "entry": "index.html",
+      "external_origins": []
+    },
+    "views": [
+      {
+        "name": "main",
+        "title": "Sentinel Risk Scanner",
+        "default": true,
+        "default_size": { "w": 720, "h": 580 },
+        "min_size": { "w": 480, "h": 380 }
+      }
+    ],
+    "host_api": {
+      "tools": ["tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94"],
+      "storage": ["get", "set"],
+      "window": ["set_title", "ready"]
+    },
+    "csp_overrides": {},
+    "state_merge": "last_writer_wins"
+  },
+  "dev": {
+    "fixtures": ["fixtures/*.jsonl"],
+    "seed_storage": {},
+    "user_id": 1
+  }
+}

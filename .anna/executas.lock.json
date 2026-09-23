@@ -1,0 +1,11 @@
+{
+  "$schema": "anna-executas-lock/v1",
+  "host": "https://anna.partners",
+  "executas": {
+    "sentinel-risk-scanner": {
+      "tool_id": "tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94",
+      "path": "./executas/sentinel-risk-scanner",
+      "source": "cut"
+    }
+  }
+}

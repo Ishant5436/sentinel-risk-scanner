@@ -1,0 +1,8 @@
+{
+  "$schema": "anna-app-identity/v1",
+  "host": "https://anna.partners",
+  "app_id": 315,
+  "slug": "sentinel-risk-scanner",
+  "handle": "ishantpanchal",
+  "first_published_at": "2026-09-23T18:11:44.253Z"
+}

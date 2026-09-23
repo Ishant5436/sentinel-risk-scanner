@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tool-dev-sentinel-risk-scanner"
+version = "0.1.0"
+description = "Executa for the sentinel-risk-scanner Anna App"
+requires-python = ">=3.10"
+
+[project.scripts]
+"tool-dev-sentinel-risk-scanner" = "sentinel_risk_scanner_plugin:main"
+
+[tool.setuptools]
+py-modules = ["sentinel_risk_scanner_plugin"]

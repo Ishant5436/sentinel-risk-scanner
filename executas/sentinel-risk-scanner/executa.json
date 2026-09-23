@@ -1,0 +1,19 @@
+{
+  "slug": "sentinel-risk-scanner",
+  "name": "Sentinel Risk Scanner",
+  "version": "1.0.0",
+  "executa_type": "tool",
+  "description": "Real-time pre-execution calldata decoding, honeypot detection, and revert diagnostics for EVM transactions.",
+  "tool_id": "tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94",
+  "type": "python",
+  "enabled": true,
+  "distribution": {
+    "active": "local",
+    "profiles": {
+      "local": {
+        "type": "local",
+        "supports_protocol": true
+      }
+    }
+  }
+}
