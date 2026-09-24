@@ -2,7 +2,8 @@
   "schema": 2,
   "required_executas": [
     {
-      "tool_id": "tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94"
+      "tool_id": "bundled:sentinel-risk-scanner",
+      "version": "latest"
     }
   ],
   "tags": ["security", "web3", "evm", "scanner", "audit"],
@@ -23,7 +24,8 @@
       }
     ],
     "host_api": {
-      "tools": ["tool-ishantpanchal-sentinel-risk-scanner-g8bx8t94"],
+      "tools": ["required:bundled:sentinel-risk-scanner"],
+      "chat": ["write_message"],
       "storage": ["get", "set"],
       "window": ["set_title", "ready"]
     },
