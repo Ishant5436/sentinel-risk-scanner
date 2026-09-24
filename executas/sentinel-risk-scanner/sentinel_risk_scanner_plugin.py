@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 
 MANIFEST = {
     "name": "tool-dev-sentinel-risk-scanner",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "tools": [
         {
             "name": "ping",
