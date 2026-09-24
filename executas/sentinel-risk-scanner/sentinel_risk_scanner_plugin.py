@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 
 MANIFEST = {
     "name": "tool-dev-sentinel-risk-scanner",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "tools": [
         {
             "name": "ping",
@@ -271,7 +271,12 @@ def main() -> None:
             elif req.get("method") == "health":
                 result = {"status": "ready"}
             elif req.get("method") == "invoke":
-                result = invoke(req["params"]["tool"], req["params"].get("arguments", {}))
+                p = req.get("params") or {}
+                t = p.get("tool") or p.get("name") or p.get("method") or "scan_calldata"
+                a = p.get("arguments") or p.get("args") or p.get("parameters")
+                if a is None or not isinstance(a, dict):
+                    a = {k: v for k, v in p.items() if k not in ("tool", "name", "method", "tool_id", "timeoutMs")}
+                result = invoke(t, a)
             else:
                 raise ValueError(f"unknown rpc: {req.get('method')}")
             sys.stdout.write(json.dumps({"jsonrpc": "2.0", "id": req.get("id"), "result": result}) + "\n")
