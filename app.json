@@ -1,7 +1,7 @@
 {
   "slug": "sentinel-risk-scanner",
   "name": "Sentinel Web3 Risk Scanner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "tagline": "Real-Time Web3 Security Diagnostic & Pre-Execution Threat Scanner for Anna AI OS",
   "description": "Sentinel Web3 Risk Scanner provides institutional-grade transaction simulation, calldata inspection, and revert diagnostics directly into the Anna AI OS desktop and chat agent.\n\n### Core Security Features\n- **Pre-Execution Calldata Threat Analysis:** Inspect raw EVM transaction payloads before signing to identify unlimited token approvals (type(uint256).max), unverified function selectors, and suspicious recipient routing.\n- **Token Safety & Honeypot Audit:** Analyze ERC-20 smart contracts for honeypot transfer restrictions, excessive transfer taxes, mint privileges, and proxy vulnerabilities on Base, Ethereum, Optimism, and Arbitrum.\n- **EVM Revert & Panic Diagnostics:** Decode raw revert bytes and Solidity panic codes (such as Panic(0x11) arithmetic overflow or custom DEX slippage errors) into clear root cause explanations and actionable remediation steps.\n- **Security Telemetry Daemon:** Track gas protected, threats intercepted, and active network health monitors in real-time.\n\n### Host & Chat Agent Integration\nInvoke security checks naturally during wallet operations in Anna Chat or inspect contracts using the dedicated glassmorphic desktop interface.",
   "category": "productivity",
