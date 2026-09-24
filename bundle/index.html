@@ -9,109 +9,72 @@
 </head>
 <body>
   <div class="hud-container">
-    <!-- Top Command Navigation Header -->
+    <!-- Compact Linear Toolbar Header -->
     <header class="hud-header">
       <div class="brand-group">
         <div class="brand-icon-wrapper">
-          <svg class="radar-pulse-ring" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0, 245, 160, 0.25)" stroke-width="2" />
-            <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(0, 210, 255, 0.35)" stroke-width="2" />
-            <circle cx="50" cy="50" r="14" fill="rgba(0, 245, 160, 0.4)" />
-          </svg>
-          <img src="icon.svg" alt="Sentinel Shield" class="brand-logo">
+          <img src="icon.svg" alt="Sentinel" class="brand-logo">
         </div>
-        <div class="brand-meta">
-          <div class="brand-title-row">
-            <h1 class="brand-title">SENTINEL</h1>
-            <span class="hud-badge cyber-teal">EVM RADAR</span>
-            <span class="hud-badge cyber-blue">v2.4.0 PRO</span>
-          </div>
-          <p class="brand-subtitle">Pre-Execution Security & Revert Diagnostics Daemon</p>
+        <div class="brand-title-row">
+          <span class="brand-title">Sentinel</span>
+          <span class="hud-badge">v1.0.5</span>
         </div>
       </div>
+
+      <!-- Segmented Control Navigation -->
+      <nav class="nav-segment-bar">
+        <button class="nav-tab active" data-tab="tab-calldata">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Calldata</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-token">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span>Token Safety</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-revert">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <span>Reverts</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-telemetry">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Telemetry</span>
+        </button>
+      </nav>
 
       <div class="header-status-group">
         <div class="chain-selector-pill">
           <span class="chain-dot"></span>
-          <span class="chain-name" id="current-chain-name">OP Superchain &middot; Base</span>
+          <span class="chain-name" id="current-chain-name">Base / OP Superchain</span>
         </div>
         <div class="status-indicator-pill" id="host-status">
           <span class="status-beacon"></span>
-          <span class="status-text" id="host-label">Connecting to Anna OS...</span>
+          <span class="status-text" id="host-label">Connecting...</span>
         </div>
       </div>
     </header>
 
-    <!-- Global Threat Telemetry Ribbon -->
+    <!-- Compact Micro-Status Bar (Replaces bulky 4-card ribbon) -->
     <section class="telemetry-ribbon">
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">TRANSACTIONS SCANNED</span>
-          <span class="metric-trend up">+18.4%</span>
-        </div>
-        <div class="metric-value-row">
-          <span class="metric-value font-mono" id="ribbon-txs">41,829</span>
-          <span class="metric-unit">payloads</span>
-        </div>
-        <div class="metric-progress-bar"><div class="fill" style="width: 88%;"></div></div>
+      <div class="ribbon-stat-item">
+        <span class="ribbon-stat-label">Scanned:</span>
+        <span class="ribbon-stat-val font-mono" id="ribbon-txs">41,829</span>
       </div>
-
-      <div class="metric-card danger-card">
-        <div class="metric-header">
-          <span class="metric-label">THREATS INTERCEPTED</span>
-          <span class="metric-badge danger">CRITICAL</span>
-        </div>
-        <div class="metric-value-row">
-          <span class="metric-value font-mono danger-text" id="ribbon-threats">142</span>
-          <span class="metric-unit">blocked</span>
-        </div>
-        <div class="metric-progress-bar danger"><div class="fill" style="width: 100%;"></div></div>
+      <span class="ribbon-sep">&middot;</span>
+      <div class="ribbon-stat-item">
+        <span class="ribbon-stat-label">Blocked:</span>
+        <span class="ribbon-stat-val font-mono highlight" id="ribbon-threats">142</span>
       </div>
-
-      <div class="metric-card success-card">
-        <div class="metric-header">
-          <span class="metric-label">FUNDS & GAS SHIELDED</span>
-          <span class="metric-badge success">VERIFIED</span>
-        </div>
-        <div class="metric-value-row">
-          <span class="metric-value font-mono success-text" id="ribbon-gas">$12,480.50</span>
-          <span class="metric-unit">USDC</span>
-        </div>
-        <div class="metric-progress-bar success"><div class="fill" style="width: 94%;"></div></div>
+      <span class="ribbon-sep">&middot;</span>
+      <div class="ribbon-stat-item">
+        <span class="ribbon-stat-label">Protected:</span>
+        <span class="ribbon-stat-val font-mono" id="ribbon-gas">$12,480.50</span>
       </div>
-
-      <div class="metric-card">
-        <div class="metric-header">
-          <span class="metric-label">EVM HEURISTICS</span>
-          <span class="metric-badge info">ARMED</span>
-        </div>
-        <div class="metric-value-row">
-          <span class="metric-value font-mono" id="ribbon-coverage">14 / 14</span>
-          <span class="metric-unit">active checks</span>
-        </div>
-        <div class="metric-progress-bar"><div class="fill" style="width: 100%;"></div></div>
+      <span class="ribbon-sep">&middot;</span>
+      <div class="ribbon-stat-item">
+        <span class="ribbon-stat-label">Checks:</span>
+        <span class="ribbon-stat-val font-mono" id="ribbon-coverage">14 / 14</span>
       </div>
     </section>
-
-    <!-- Sleek Segmented Control Navigation -->
-    <nav class="nav-segment-bar">
-      <button class="nav-tab active" data-tab="tab-calldata">
-        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span>Calldata Inspector</span>
-      </button>
-      <button class="nav-tab" data-tab="tab-token">
-        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-        <span>Token Safety & Honeypot</span>
-      </button>
-      <button class="nav-tab" data-tab="tab-revert">
-        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-        <span>Revert Diagnostics</span>
-      </button>
-      <button class="nav-tab" data-tab="tab-telemetry">
-        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        <span>Telemetry Daemon</span>
-      </button>
-    </nav>
 
     <!-- Main Viewport Panels -->
     <div class="hud-viewport">
@@ -121,7 +84,7 @@
           <div class="panel-headline-row">
             <div>
               <h2 class="panel-heading">Pre-Execution Calldata Threat Analysis</h2>
-              <p class="panel-subheading">Decompile function selectors, inspect parameter bounds, and identify token drain permits prior to transaction signing.</p>
+              <p class="panel-subheading">Decompile selectors, inspect parameter bounds, and detect drain permissions.</p>
             </div>
             <button class="action-btn-primary" id="btn-scan-calldata">
               <span class="btn-spinner" id="calldata-spinner"></span>
@@ -130,30 +93,30 @@
             </button>
           </div>
 
-          <!-- Quick Preset Chips for Reviewers -->
+          <!-- Quick Presets -->
           <div class="preset-section">
-            <span class="preset-label">QUICK SIMULATION PRESETS:</span>
+            <span class="preset-label">Presets:</span>
             <div class="preset-chips-wrap">
-              <button class="preset-chip active" id="preset-unlimited-approval">🚨 Unlimited Drain Approval</button>
-              <button class="preset-chip" id="preset-permit2">⚡ Permit2 TransferFrom</button>
-              <button class="preset-chip" id="preset-safe-swap">✅ Legitimate Uniswap V3 Swap</button>
-              <button class="preset-chip" id="preset-suspicious-delegate">⚠️ Suspicious Upgrade Proxy</button>
+              <button class="preset-chip active" id="preset-unlimited-approval">Unlimited Approval</button>
+              <button class="preset-chip" id="preset-permit2">Permit2 Transfer</button>
+              <button class="preset-chip" id="preset-safe-swap">Uniswap V3 Swap</button>
+              <button class="preset-chip" id="preset-suspicious-delegate">Upgrade Delegate</button>
             </div>
           </div>
 
           <!-- Input Fields -->
           <div class="form-grid">
             <div class="form-field">
-              <label class="field-label" for="input-to-address">CONTRACT DESTINATION ADDRESS</label>
+              <label class="field-label" for="input-to-address">Contract Destination Address</label>
               <div class="field-input-wrap">
                 <input type="text" id="input-to-address" class="hud-input font-mono" value="0x4200000000000000000000000000000000000006" placeholder="0x..." spellcheck="false" />
                 <span class="field-aux">L2 Gas Token</span>
               </div>
             </div>
 
-            <div class="form-field full-width">
+            <div class="form-field">
               <div class="label-row">
-                <label class="field-label" for="input-calldata">RAW CALLDATA HEX STREAM</label>
+                <label class="field-label" for="input-calldata">Raw Calldata Hex Stream</label>
                 <span class="char-count font-mono" id="calldata-byte-count">68 bytes &middot; 4-byte selector</span>
               </div>
               <textarea id="input-calldata" class="hud-textarea font-mono" rows="2" placeholder="0x..." spellcheck="false">0x095ea7b30000000000000000000000001111111111111111111111111111111111111111ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</textarea>
@@ -173,7 +136,7 @@
           <div class="panel-headline-row">
             <div>
               <h2 class="panel-heading">Smart Contract Honeypot & Tax Diagnostic</h2>
-              <p class="panel-subheading">Audit ERC-20 token contracts for hidden transfer fees, blacklist algorithms, mint privileges, and proxy backdoors.</p>
+              <p class="panel-subheading">Audit ERC-20 contracts for transfer fees, blacklist algorithms, and proxy backdoors.</p>
             </div>
             <button class="action-btn-primary" id="btn-audit-token">
               <span class="btn-spinner" id="token-spinner"></span>
@@ -184,23 +147,23 @@
 
           <!-- Token Presets -->
           <div class="preset-section">
-            <span class="preset-label">CONTRACT AUDIT PRESETS:</span>
+            <span class="preset-label">Presets:</span>
             <div class="preset-chips-wrap">
-              <button class="preset-chip active" id="preset-token-usdc">✅ USDC (Circle Native &middot; Base)</button>
-              <button class="preset-chip" id="preset-token-honeypot">🚨 Malicious Honeypot (99% Sell Tax)</button>
-              <button class="preset-chip" id="preset-token-proxy">⚠️ Unverified Upgradable Proxy</button>
+              <button class="preset-chip active" id="preset-token-usdc">USDC (Circle Native)</button>
+              <button class="preset-chip" id="preset-token-honeypot">Honeypot (99% Sell Tax)</button>
+              <button class="preset-chip" id="preset-token-proxy">Upgradable Proxy</button>
             </div>
           </div>
 
           <!-- Form Grid -->
           <div class="form-grid two-col">
             <div class="form-field">
-              <label class="field-label" for="input-token-address">ERC-20 TOKEN ADDRESS</label>
+              <label class="field-label" for="input-token-address">ERC-20 Token Address</label>
               <input type="text" id="input-token-address" class="hud-input font-mono" value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" placeholder="0x..." spellcheck="false" />
             </div>
 
             <div class="form-field">
-              <label class="field-label" for="select-chain">TARGET NETWORK</label>
+              <label class="field-label" for="select-chain">Target Network</label>
               <select id="select-chain" class="hud-select font-mono">
                 <option value="base" selected>Base Mainnet (8453)</option>
                 <option value="optimism">Optimism Mainnet (10)</option>
@@ -223,7 +186,7 @@
           <div class="panel-headline-row">
             <div>
               <h2 class="panel-heading">EVM Revert & Panic Code Decompiler</h2>
-              <p class="panel-subheading">Translate raw EVM error return payloads and Solidity Panic codes into human-readable root causes and remediation guidance.</p>
+              <p class="panel-subheading">Translate error payloads and Solidity Panic codes into root causes and remediation guidance.</p>
             </div>
             <button class="action-btn-primary" id="btn-explain-revert">
               <span class="btn-spinner" id="revert-spinner"></span>
@@ -234,18 +197,18 @@
 
           <!-- Revert Presets -->
           <div class="preset-section">
-            <span class="preset-label">REVERT DECODE PRESETS:</span>
+            <span class="preset-label">Presets:</span>
             <div class="preset-chips-wrap">
-              <button class="preset-chip active" id="preset-revert-underflow">Panic(0x11) Arithmetic Overflow</button>
-              <button class="preset-chip" id="preset-revert-assert">Panic(0x01) Assert Violation</button>
-              <button class="preset-chip" id="preset-revert-slippage">Custom DEX Error: Slippage Exceeded</button>
-              <button class="preset-chip" id="preset-revert-unauthorized">Custom Error: UnauthorizedCaller</button>
+              <button class="preset-chip active" id="preset-revert-underflow">Panic(0x11) Overflow</button>
+              <button class="preset-chip" id="preset-revert-assert">Panic(0x01) Assert</button>
+              <button class="preset-chip" id="preset-revert-slippage">Slippage Exceeded</button>
+              <button class="preset-chip" id="preset-revert-unauthorized">UnauthorizedCaller</button>
             </div>
           </div>
 
           <div class="form-grid">
-            <div class="form-field full-width">
-              <label class="field-label" for="input-error-data">RAW REVERT RETURN BYTES (HEX)</label>
+            <div class="form-field">
+              <label class="field-label" for="input-error-data">Raw Revert Return Bytes (Hex)</label>
               <input type="text" id="input-error-data" class="hud-input font-mono" value="0x4e487b710000000000000000000000000000000000000000000000000000000000000011" placeholder="0x4e487b71..." spellcheck="false" />
             </div>
           </div>
@@ -262,8 +225,8 @@
         <div class="panel-glass-surface">
           <div class="panel-headline-row">
             <div>
-              <h2 class="panel-heading">Active Security Telemetry & System Invariants</h2>
-              <p class="panel-subheading">Live daemon health, institutional memory safety checks, and Superchain RPC latency metrics.</p>
+              <h2 class="panel-heading">Security Telemetry & System Invariants</h2>
+              <p class="panel-subheading">Daemon health, memory safety checks, and Superchain RPC metrics.</p>
             </div>
             <button class="action-btn-primary" id="btn-refresh-telemetry">
               <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -281,14 +244,14 @@
     <!-- HUD Footer Bar -->
     <footer class="hud-footer">
       <div class="footer-left">
-        <span class="compliance-tag">DETERMINISTIC SAFETY CERTIFIED</span>
+        <span class="compliance-tag">Deterministic Safety</span>
         <span class="bullet">&bull;</span>
-        <span class="footer-text">Deterministic bounded AST calldata validation &middot; Zero dynamic heap allocation on hot path</span>
+        <span class="footer-text">Bounded AST calldata validation &middot; Zero dynamic heap on hot path</span>
       </div>
       <div class="footer-right">
         <button class="share-chat-btn" id="btn-post-anna-chat" title="Send security findings to Anna AI OS Agent Chat">
           <svg class="chat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span>Post Report to Anna Chat</span>
+          <span>Post to Anna Chat</span>
         </button>
       </div>
     </footer>

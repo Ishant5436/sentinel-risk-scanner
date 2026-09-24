@@ -1,6 +1,6 @@
 {
   "name": "tool-dev-sentinel-risk-scanner",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "tools": [
     {
       "name": "ping",
