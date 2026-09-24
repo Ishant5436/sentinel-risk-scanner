@@ -3,12 +3,14 @@
  * Dispatches to bundled executa tool-dev-sentinel-risk-scanner.
  */
 
+const EXECUTA_HANDLE = "sentinel-risk-scanner";
 const DEV_FALLBACK_TOOL_ID = "tool-dev-sentinel-risk-scanner";
-const TOOL_ID =
-  (typeof window !== "undefined"
+function getToolId() {
+  return (typeof window !== "undefined"
     && window.__ANNA_TOOL_IDS__
-    && window.__ANNA_TOOL_IDS__["sentinel-risk-scanner"])
+    && window.__ANNA_TOOL_IDS__[EXECUTA_HANDLE])
   || DEV_FALLBACK_TOOL_ID;
+}
 
 // High-fidelity fallback fixtures for standalone browser preview
 const STANDALONE_FIXTURES = {
@@ -51,6 +53,29 @@ const STANDALONE_FIXTURES = {
 
 let anna = null;
 
+// Connect to Anna App Runtime if inside host iframe
+(async function initRuntime() {
+  try {
+    const sdkModule = await import("/static/anna-apps/_sdk/latest/index.js");
+    if (sdkModule && sdkModule.AnnaAppRuntime) {
+      anna = await sdkModule.AnnaAppRuntime.connect({ appId: "sentinel-risk-scanner" });
+      const hostLabel = document.getElementById("host-label");
+      if (hostLabel) hostLabel.textContent = "Anna OS Active";
+      console.log("Connected to Anna App Runtime");
+    }
+  } catch (_e) {
+    console.log("Using standalone preview mode");
+  }
+})();
+
+// Helper to extract payload whether unwrapped by host or enclosed in envelope
+function extractPayload(res) {
+  if (!res) return null;
+  if (typeof res !== "object") return res;
+  if ("data" in res && res.data !== undefined) return res.data;
+  return res;
+}
+
 // Tab Switching
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -66,8 +91,16 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 async function callAnnaTool(method, args = {}) {
   if (anna && anna.tools && typeof anna.tools.invoke === "function") {
     try {
-      const res = await anna.tools.invoke(TOOL_ID, method, args);
-      if (res && res.success) return res.data;
+      const activeToolId = getToolId();
+      const res = await anna.tools.invoke({
+        tool_id: activeToolId,
+        method: method,
+        args: args
+      });
+      const data = extractPayload(res);
+      if (data && typeof data === "object") {
+        return data;
+      }
     } catch (err) {
       console.warn("Anna tool dispatch error, using local fallback:", err);
     }

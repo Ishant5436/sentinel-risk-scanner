@@ -1,0 +1,104 @@
+name: Build Multi-Platform Executa Binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'executas/**'
+      - '.github/workflows/build-executa.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - platform: linux-x86_64
+            os: ubuntu-latest
+            format: tar.gz
+            bin_name: sentinel-risk-scanner
+          - platform: darwin-x86_64
+            os: macos-13
+            format: tar.gz
+            bin_name: sentinel-risk-scanner
+          - platform: darwin-arm64
+            os: macos-14
+            format: tar.gz
+            bin_name: sentinel-risk-scanner
+          - platform: windows-x86_64
+            os: windows-latest
+            format: zip
+            bin_name: sentinel-risk-scanner.exe
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install build requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller
+
+      - name: Build Executa Binary (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cd executas/sentinel-risk-scanner
+          pyinstaller --onefile --clean --name sentinel-risk-scanner sentinel_risk_scanner_plugin.py
+          mkdir -p release_artifacts
+          tar -czvf release_artifacts/sentinel-risk-scanner-1.0.0-${{ matrix.platform }}.tar.gz -C dist sentinel-risk-scanner
+
+      - name: Build Executa Binary (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd executas/sentinel-risk-scanner
+          pyinstaller --onefile --clean --name sentinel-risk-scanner sentinel_risk_scanner_plugin.py
+          New-Item -ItemType Directory -Force -Path release_artifacts
+          Compress-Archive -Path dist\sentinel-risk-scanner.exe -DestinationPath release_artifacts\sentinel-risk-scanner-1.0.0-${{ matrix.platform }}.zip
+
+      - name: Upload Binary Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.platform }}
+          path: executas/sentinel-risk-scanner/release_artifacts/*
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all_artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: ls -la all_artifacts
+
+      - name: Create or update Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main'
+        with:
+          tag_name: v1.0.0-binaries
+          name: "Sentinel Risk Scanner v1.0.0 Multi-Platform Binaries"
+          body: "Official multi-platform Executa binaries for Anna AI OS (Cloud Agent & Desktop)."
+          files: all_artifacts/*
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

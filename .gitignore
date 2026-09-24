@@ -8,3 +8,10 @@ __pycache__/
 *keypair*.json
 id.json
 wallet.json
+build/
+dist/
+*.spec
+.anna/
+bundle/anna-tool-ids.js
+executas/**/.anna/
+
