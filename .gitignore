@@ -14,4 +14,6 @@ dist/
 .anna/
 bundle/anna-tool-ids.js
 executas/**/.anna/
-
+*.egg-info/
+uv.lock
+.venv/

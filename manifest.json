@@ -17,8 +17,9 @@
         "name": "main",
         "title": "Sentinel Risk Scanner",
         "default": true,
-        "default_size": { "w": 720, "h": 580 },
-        "min_size": { "w": 480, "h": 380 }
+        "default_size": { "w": 1020, "h": 760 },
+        "min_size": { "w": 780, "h": 540 },
+        "max_size": { "w": 1400, "h": 950 }
       }
     ],
     "host_api": {

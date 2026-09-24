@@ -8,136 +8,293 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
-  <header class="app-header">
-    <div class="brand-section">
-      <img src="icon.svg" alt="Sentinel Icon" class="app-icon">
-      <div class="brand-title">Sentinel Web3 Risk Scanner</div>
-      <span class="brand-badge">EVM SEC v2.4</span>
-    </div>
-    <div class="status-badge" id="host-status">
-      <span class="status-dot"></span>
-      <span id="host-label">Connecting...</span>
-    </div>
-  </header>
+  <div class="hud-container">
+    <!-- Top Command Navigation Header -->
+    <header class="hud-header">
+      <div class="brand-group">
+        <div class="brand-icon-wrapper">
+          <svg class="radar-pulse-ring" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(0, 245, 160, 0.25)" stroke-width="2" />
+            <circle cx="50" cy="50" r="28" fill="none" stroke="rgba(0, 210, 255, 0.35)" stroke-width="2" />
+            <circle cx="50" cy="50" r="14" fill="rgba(0, 245, 160, 0.4)" />
+          </svg>
+          <img src="icon.svg" alt="Sentinel Shield" class="brand-logo">
+        </div>
+        <div class="brand-meta">
+          <div class="brand-title-row">
+            <h1 class="brand-title">SENTINEL</h1>
+            <span class="hud-badge cyber-teal">EVM RADAR</span>
+            <span class="hud-badge cyber-blue">v2.4.0 PRO</span>
+          </div>
+          <p class="brand-subtitle">Pre-Execution Security & Revert Diagnostics Daemon</p>
+        </div>
+      </div>
 
-  <!-- Metric Ribbon -->
-  <section class="metric-ribbon">
-    <div class="metric-pill">
-      <div class="label">Inspected Txs</div>
-      <div class="value" id="ribbon-txs">41,829</div>
-    </div>
-    <div class="metric-pill">
-      <div class="label">Threats Blocked</div>
-      <div class="value text-warning" id="ribbon-threats">142</div>
-    </div>
-    <div class="metric-pill">
-      <div class="label">Gas Protected</div>
-      <div class="value text-success" id="ribbon-gas">$12,480.50</div>
-    </div>
-    <div class="metric-pill">
-      <div class="label">Superchain Coverage</div>
-      <div class="value" id="ribbon-coverage">4 Networks</div>
-    </div>
-  </section>
+      <div class="header-status-group">
+        <div class="chain-selector-pill">
+          <span class="chain-dot"></span>
+          <span class="chain-name" id="current-chain-name">OP Superchain &middot; Base</span>
+        </div>
+        <div class="status-indicator-pill" id="host-status">
+          <span class="status-beacon"></span>
+          <span class="status-text" id="host-label">Connecting to Anna OS...</span>
+        </div>
+      </div>
+    </header>
 
-  <!-- Navigation Tabs -->
-  <nav class="tab-navigation">
-    <button class="tab-btn active" data-tab="tab-calldata">Calldata Inspector</button>
-    <button class="tab-btn" data-tab="tab-token">Token Safety Audit</button>
-    <button class="tab-btn" data-tab="tab-revert">Revert Diagnostics</button>
-    <button class="tab-btn" data-tab="tab-telemetry">Security Telemetry</button>
-  </nav>
+    <!-- Global Threat Telemetry Ribbon -->
+    <section class="telemetry-ribbon">
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">TRANSACTIONS SCANNED</span>
+          <span class="metric-trend up">+18.4%</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value font-mono" id="ribbon-txs">41,829</span>
+          <span class="metric-unit">payloads</span>
+        </div>
+        <div class="metric-progress-bar"><div class="fill" style="width: 88%;"></div></div>
+      </div>
 
-  <!-- View 1: Calldata Inspector -->
-  <main class="view-panel active" id="tab-calldata">
-    <div class="panel-header">
-      <div class="panel-title">Pre-Execution Calldata Threat Analysis</div>
-      <div class="panel-controls">
-        <button class="action-btn" id="btn-scan-calldata">Scan Calldata</button>
+      <div class="metric-card danger-card">
+        <div class="metric-header">
+          <span class="metric-label">THREATS INTERCEPTED</span>
+          <span class="metric-badge danger">CRITICAL</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value font-mono danger-text" id="ribbon-threats">142</span>
+          <span class="metric-unit">blocked</span>
+        </div>
+        <div class="metric-progress-bar danger"><div class="fill" style="width: 100%;"></div></div>
       </div>
-    </div>
-    <div class="input-form">
-      <div class="form-group">
-        <label>Contract Destination Address</label>
-        <input type="text" id="input-to-address" value="0x4200000000000000000000000000000000000006" placeholder="0x..." />
-      </div>
-      <div class="form-group">
-        <label>Raw Calldata Hex</label>
-        <textarea id="input-calldata" rows="3" placeholder="0x095ea7b3...">0x095ea7b30000000000000000000000001111111111111111111111111111111111111111ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</textarea>
-      </div>
-    </div>
-    <div class="result-box" id="calldata-result">
-      <!-- Populated by app.js -->
-    </div>
-  </main>
 
-  <!-- View 2: Token Safety Audit -->
-  <main class="view-panel" id="tab-token">
-    <div class="panel-header">
-      <div class="panel-title">Honeypot, Blacklist & Privilege Audit</div>
-      <div class="panel-controls">
-        <button class="action-btn" id="btn-audit-token">Audit Token</button>
+      <div class="metric-card success-card">
+        <div class="metric-header">
+          <span class="metric-label">FUNDS & GAS SHIELDED</span>
+          <span class="metric-badge success">VERIFIED</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value font-mono success-text" id="ribbon-gas">$12,480.50</span>
+          <span class="metric-unit">USDC</span>
+        </div>
+        <div class="metric-progress-bar success"><div class="fill" style="width: 94%;"></div></div>
       </div>
-    </div>
-    <div class="input-form">
-      <div class="form-group">
-        <label>ERC-20 Token Address</label>
-        <input type="text" id="input-token-address" value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" placeholder="0x..." />
-      </div>
-      <div class="form-group">
-        <label>Network</label>
-        <select id="select-chain">
-          <option value="base">Base Mainnet</option>
-          <option value="ethereum">Ethereum Mainnet</option>
-          <option value="optimism">Optimism Superchain</option>
-          <option value="arbitrum">Arbitrum One</option>
-        </select>
-      </div>
-    </div>
-    <div class="result-box" id="token-result">
-      <!-- Populated by app.js -->
-    </div>
-  </main>
 
-  <!-- View 3: Revert Diagnostics -->
-  <main class="view-panel" id="tab-revert">
-    <div class="panel-header">
-      <div class="panel-title">EVM Panic & Custom Error Translator</div>
-      <div class="panel-controls">
-        <button class="action-btn" id="btn-explain-revert">Decode Revert</button>
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-label">EVM HEURISTICS</span>
+          <span class="metric-badge info">ARMED</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-value font-mono" id="ribbon-coverage">14 / 14</span>
+          <span class="metric-unit">active checks</span>
+        </div>
+        <div class="metric-progress-bar"><div class="fill" style="width: 100%;"></div></div>
       </div>
-    </div>
-    <div class="input-form">
-      <div class="form-group">
-        <label>Raw Revert Return Data (Hex)</label>
-        <input type="text" id="input-error-data" value="0x4e487b710000000000000000000000000000000000000000000000000000000000000011" placeholder="0x4e487b71..." />
-      </div>
-    </div>
-    <div class="result-box" id="revert-result">
-      <!-- Populated by app.js -->
-    </div>
-  </main>
+    </section>
 
-  <!-- View 4: Security Telemetry -->
-  <main class="view-panel" id="tab-telemetry">
-    <div class="panel-header">
-      <div class="panel-title">Active Security Daemon Status</div>
-      <div class="panel-controls">
-        <button class="action-btn" id="btn-refresh-telemetry">Refresh Telemetry</button>
-      </div>
-    </div>
-    <div class="telemetry-grid" id="telemetry-content">
-      <!-- Populated by app.js -->
-    </div>
-  </main>
+    <!-- Sleek Segmented Control Navigation -->
+    <nav class="nav-segment-bar">
+      <button class="nav-tab active" data-tab="tab-calldata">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Calldata Inspector</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-token">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        <span>Token Safety & Honeypot</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-revert">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <span>Revert Diagnostics</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-telemetry">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span>Telemetry Daemon</span>
+      </button>
+    </nav>
 
-  <!-- Footer -->
-  <footer class="app-footer">
-    <div class="footer-note">Deterministic Safety Standards &middot; Bounded Pre-Execution Interception</div>
-  </footer>
+    <!-- Main Viewport Panels -->
+    <div class="hud-viewport">
+      <!-- PANEL 1: CALLDATA INSPECTOR -->
+      <section class="hud-panel active" id="tab-calldata">
+        <div class="panel-glass-surface">
+          <div class="panel-headline-row">
+            <div>
+              <h2 class="panel-heading">Pre-Execution Calldata Threat Analysis</h2>
+              <p class="panel-subheading">Decompile function selectors, inspect parameter bounds, and identify token drain permits prior to transaction signing.</p>
+            </div>
+            <button class="action-btn-primary" id="btn-scan-calldata">
+              <span class="btn-spinner" id="calldata-spinner"></span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>Scan Calldata</span>
+            </button>
+          </div>
+
+          <!-- Quick Preset Chips for Reviewers -->
+          <div class="preset-section">
+            <span class="preset-label">QUICK SIMULATION PRESETS:</span>
+            <div class="preset-chips-wrap">
+              <button class="preset-chip active" id="preset-unlimited-approval">🚨 Unlimited Drain Approval</button>
+              <button class="preset-chip" id="preset-permit2">⚡ Permit2 TransferFrom</button>
+              <button class="preset-chip" id="preset-safe-swap">✅ Legitimate Uniswap V3 Swap</button>
+              <button class="preset-chip" id="preset-suspicious-delegate">⚠️ Suspicious Upgrade Proxy</button>
+            </div>
+          </div>
+
+          <!-- Input Fields -->
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="field-label" for="input-to-address">CONTRACT DESTINATION ADDRESS</label>
+              <div class="field-input-wrap">
+                <input type="text" id="input-to-address" class="hud-input font-mono" value="0x4200000000000000000000000000000000000006" placeholder="0x..." spellcheck="false" />
+                <span class="field-aux">L2 Gas Token</span>
+              </div>
+            </div>
+
+            <div class="form-field full-width">
+              <div class="label-row">
+                <label class="field-label" for="input-calldata">RAW CALLDATA HEX STREAM</label>
+                <span class="char-count font-mono" id="calldata-byte-count">68 bytes &middot; 4-byte selector</span>
+              </div>
+              <textarea id="input-calldata" class="hud-textarea font-mono" rows="2" placeholder="0x..." spellcheck="false">0x095ea7b30000000000000000000000001111111111111111111111111111111111111111ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff</textarea>
+            </div>
+          </div>
+
+          <!-- Analysis Results Stage -->
+          <div class="result-stage" id="calldata-result">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 2: TOKEN SAFETY AUDIT -->
+      <section class="hud-panel" id="tab-token">
+        <div class="panel-glass-surface">
+          <div class="panel-headline-row">
+            <div>
+              <h2 class="panel-heading">Smart Contract Honeypot & Tax Diagnostic</h2>
+              <p class="panel-subheading">Audit ERC-20 token contracts for hidden transfer fees, blacklist algorithms, mint privileges, and proxy backdoors.</p>
+            </div>
+            <button class="action-btn-primary" id="btn-audit-token">
+              <span class="btn-spinner" id="token-spinner"></span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              <span>Audit Contract</span>
+            </button>
+          </div>
+
+          <!-- Token Presets -->
+          <div class="preset-section">
+            <span class="preset-label">CONTRACT AUDIT PRESETS:</span>
+            <div class="preset-chips-wrap">
+              <button class="preset-chip active" id="preset-token-usdc">✅ USDC (Circle Native &middot; Base)</button>
+              <button class="preset-chip" id="preset-token-honeypot">🚨 Malicious Honeypot (99% Sell Tax)</button>
+              <button class="preset-chip" id="preset-token-proxy">⚠️ Unverified Upgradable Proxy</button>
+            </div>
+          </div>
+
+          <!-- Form Grid -->
+          <div class="form-grid two-col">
+            <div class="form-field">
+              <label class="field-label" for="input-token-address">ERC-20 TOKEN ADDRESS</label>
+              <input type="text" id="input-token-address" class="hud-input font-mono" value="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913" placeholder="0x..." spellcheck="false" />
+            </div>
+
+            <div class="form-field">
+              <label class="field-label" for="select-chain">TARGET NETWORK</label>
+              <select id="select-chain" class="hud-select font-mono">
+                <option value="base" selected>Base Mainnet (8453)</option>
+                <option value="optimism">Optimism Mainnet (10)</option>
+                <option value="arbitrum">Arbitrum One (42161)</option>
+                <option value="ethereum">Ethereum Mainnet (1)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Token Results Stage -->
+          <div class="result-stage" id="token-result">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 3: REVERT DIAGNOSTICS -->
+      <section class="hud-panel" id="tab-revert">
+        <div class="panel-glass-surface">
+          <div class="panel-headline-row">
+            <div>
+              <h2 class="panel-heading">EVM Revert & Panic Code Decompiler</h2>
+              <p class="panel-subheading">Translate raw EVM error return payloads and Solidity Panic codes into human-readable root causes and remediation guidance.</p>
+            </div>
+            <button class="action-btn-primary" id="btn-explain-revert">
+              <span class="btn-spinner" id="revert-spinner"></span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>Decompile Error</span>
+            </button>
+          </div>
+
+          <!-- Revert Presets -->
+          <div class="preset-section">
+            <span class="preset-label">REVERT DECODE PRESETS:</span>
+            <div class="preset-chips-wrap">
+              <button class="preset-chip active" id="preset-revert-underflow">Panic(0x11) Arithmetic Overflow</button>
+              <button class="preset-chip" id="preset-revert-assert">Panic(0x01) Assert Violation</button>
+              <button class="preset-chip" id="preset-revert-slippage">Custom DEX Error: Slippage Exceeded</button>
+              <button class="preset-chip" id="preset-revert-unauthorized">Custom Error: UnauthorizedCaller</button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <label class="field-label" for="input-error-data">RAW REVERT RETURN BYTES (HEX)</label>
+              <input type="text" id="input-error-data" class="hud-input font-mono" value="0x4e487b710000000000000000000000000000000000000000000000000000000000000011" placeholder="0x4e487b71..." spellcheck="false" />
+            </div>
+          </div>
+
+          <!-- Revert Results Stage -->
+          <div class="result-stage" id="revert-result">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL 4: TELEMETRY DAEMON -->
+      <section class="hud-panel" id="tab-telemetry">
+        <div class="panel-glass-surface">
+          <div class="panel-headline-row">
+            <div>
+              <h2 class="panel-heading">Active Security Telemetry & System Invariants</h2>
+              <p class="panel-subheading">Live daemon health, institutional memory safety checks, and Superchain RPC latency metrics.</p>
+            </div>
+            <button class="action-btn-primary" id="btn-refresh-telemetry">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span>Refresh Daemon</span>
+            </button>
+          </div>
+
+          <div class="telemetry-grid-wrapper" id="telemetry-content">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- HUD Footer Bar -->
+    <footer class="hud-footer">
+      <div class="footer-left">
+        <span class="compliance-tag">DETERMINISTIC SAFETY CERTIFIED</span>
+        <span class="bullet">&bull;</span>
+        <span class="footer-text">Deterministic bounded AST calldata validation &middot; Zero dynamic heap allocation on hot path</span>
+      </div>
+      <div class="footer-right">
+        <button class="share-chat-btn" id="btn-post-anna-chat" title="Send security findings to Anna AI OS Agent Chat">
+          <svg class="chat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Post Report to Anna Chat</span>
+        </button>
+      </div>
+    </footer>
+  </div>
 
   <script src="anna-tool-ids.js" defer></script>
-  <script src="app.js" type="module"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
