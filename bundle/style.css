@@ -824,3 +824,423 @@ html, body {
 .font-mono {
   font-family: var(--font-mono);
 }
+
+/* ==========================================================================
+   AI Intent Reasoning & Neuro-Security Intelligence (Linear Pro & OLED)
+   ========================================================================== */
+
+.ai-pill-badge {
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+.intent-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.intent-chips-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.intent-chip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.intent-chip:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-pure);
+  border-color: var(--border-medium);
+}
+
+.intent-chip.active {
+  background: rgba(59, 130, 246, 0.12);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.35);
+  font-weight: 500;
+}
+
+/* AI Security Reasoning Container */
+.ai-reasoning-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border-hairline);
+  padding-top: 8px;
+}
+
+.ai-section-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #93c5fd;
+}
+
+.ai-section-heading svg {
+  width: 13px;
+  height: 13px;
+  color: #3b82f6;
+}
+
+.ai-reasoning-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 820px) {
+  .ai-reasoning-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Intent Divergence Card */
+.intent-divergence-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.intent-divergence-card.critical {
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.05);
+}
+
+.intent-divergence-card.warning {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.intent-divergence-card.safe {
+  border-color: rgba(52, 211, 153, 0.3);
+  background: rgba(52, 211, 153, 0.05);
+}
+
+.divergence-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.divergence-meter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.divergence-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.divergence-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.divergence-bar-fill.critical {
+  background: linear-gradient(90deg, #f87171, #ef4444);
+}
+
+.divergence-bar-fill.warning {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+.divergence-bar-fill.safe {
+  background: linear-gradient(90deg, #34d399, #10b981);
+}
+
+.divergence-score-val {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.verdict-tag {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.verdict-tag.critical {
+  background: rgba(248, 113, 113, 0.2);
+  color: #f87171;
+}
+
+.verdict-tag.warning {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.verdict-tag.safe {
+  background: rgba(52, 211, 153, 0.2);
+  color: #34d399;
+}
+
+.divergence-narrative {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.divergence-intent-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10.5px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-hairline);
+}
+
+.divergence-pair-row {
+  display: flex;
+  gap: 6px;
+}
+
+.divergence-pair-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 60px;
+}
+
+/* Threat Correlation Matrix Card */
+.threat-correlation-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.causal-attack-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-pure);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.causal-chain-text {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.blast-radius-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  padding: 4px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #fca5a5;
+}
+
+.signal-layer-pills {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.signal-pill {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+}
+
+.signal-pill.critical {
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* Context Remediation & Safe Calldata */
+.context-remediation-card {
+  grid-column: 1 / -1;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-hairline);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.remediation-action-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #60a5fa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.remediation-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  padding-left: 14px;
+}
+
+.safe-calldata-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-top: 3px;
+}
+
+.safe-calldata-code {
+  font-size: 10px;
+  color: #93c5fd;
+  word-break: break-all;
+  flex: 1;
+}
+
+.btn-copy-calldata {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+
+.btn-copy-calldata:hover {
+  background: rgba(59, 130, 246, 0.35);
+}
+
+.btn-ai-neuro-reason {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #93c5fd;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.12s ease;
+}
+
+.btn-ai-neuro-reason:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: #ffffff;
+}
+
+/* Toast Notifications Container */
+.sentinel-toast-container {
+  position: fixed;
+  bottom: 34px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.sentinel-toast {
+  background: #18181b;
+  color: #f4f4f5;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: sentinel-toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sentinel-toast-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sentinel-toast-out {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s ease;
+}
+
+.btn-dispatched {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+  color: #4ade80 !important;
+}
+

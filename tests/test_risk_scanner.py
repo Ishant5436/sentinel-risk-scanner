@@ -82,3 +82,54 @@ def test_invoke_dispatcher_envelope():
     res = invoke("get_security_telemetry", {})
     assert res["success"] is True
     assert "engine_version" in res["data"]
+
+def test_scan_calldata_ai_reasoning_intent_divergence_phishing():
+    spender = "0000000000000000000000001111111111111111111111111111111111111111"
+    max_uint256 = "f" * 64
+    calldata = f"0x095ea7b3{spender}{max_uint256}"
+    to_addr = "0x4200000000000000000000000000000000000006"
+
+    res = scan_calldata(calldata, to_addr, user_intent="Claim Community Airdrop & Rewards")
+    assert "ai_reasoning" in res
+    ai = res["ai_reasoning"]
+    assert "intent_divergence" in ai
+    assert "threat_correlation" in ai
+    assert "context_remediation" in ai
+
+    div = ai["intent_divergence"]
+    assert div["verdict"] == "CRITICAL_INTENT_DIVERGENCE"
+    assert div["divergence_score"] >= 90
+    assert "airdrop" in div["reasoning"].lower() or "phishing" in div["reasoning"].lower()
+
+    corr = ai["threat_correlation"]
+    assert "Allowance Drain" in corr["attack_vector"]
+    assert len(corr["signal_matrix"]) >= 1
+
+    remed = ai["context_remediation"]
+    assert remed["safe_calldata"] != calldata
+    assert "ffffffffffffffff" not in remed["safe_calldata"]
+    assert len(remed["remediation_steps"]) >= 2
+
+def test_scan_calldata_ai_reasoning_aligned_swap():
+    # 0x414bf389 (exactInputSingle)
+    calldata = "0x414bf389" + "0" * 64 + "1" * 64
+    to_addr = "0x2626664c2603336E57B271c5C0b26F421741e481"
+    res = scan_calldata(calldata, to_addr, user_intent="Swap 500 USDC on Uniswap V3")
+
+    assert "ai_reasoning" in res
+    div = res["ai_reasoning"]["intent_divergence"]
+    assert div["verdict"] == "ALIGNED_INTENT"
+    assert div["divergence_score"] == 0
+
+def test_scan_calldata_ai_reasoning_precondition_approval():
+    spender = "0000000000000000000000001111111111111111111111111111111111111111"
+    max_uint256 = "f" * 64
+    calldata = f"0x095ea7b3{spender}{max_uint256}"
+    to_addr = "0x4200000000000000000000000000000000000006"
+
+    res = scan_calldata(calldata, to_addr, user_intent="Swap 500 USDC on Uniswap")
+    assert "ai_reasoning" in res
+    div = res["ai_reasoning"]["intent_divergence"]
+    assert div["verdict"] == "PRECONDITION_STEP_DIVERGENCE"
+    assert div["divergence_score"] == 40
+

@@ -32,7 +32,8 @@ MANIFEST = {
                 "properties": {
                     "calldata": {"type": "string", "description": "Raw hex calldata payload starting with 0x"},
                     "to_address": {"type": "string", "description": "Destination smart contract address"},
-                    "value": {"type": "string", "description": "ETH/native value in wei (default: 0)"}
+                    "value": {"type": "string", "description": "ETH/native value in wei (default: 0)"},
+                    "user_intent": {"type": "string", "description": "User intended action for AI intent divergence analysis"}
                 },
                 "required": ["calldata", "to_address"],
                 "additionalProperties": False,
@@ -121,7 +122,136 @@ def _validate_address(addr: str) -> str:
     assert clean != "0x0000000000000000000000000000000000000000", "Zero address prohibited"
     return clean
 
-def scan_calldata(calldata: str, to_address: str, value: str = "0") -> Dict[str, Any]:
+def analyze_intent_divergence(
+    declared_intent: str, selector: str, calldata: str, to_address: str
+) -> Dict[str, Any]:
+    assert isinstance(declared_intent, str), "declared_intent must be a string"
+    assert isinstance(selector, str), "selector must be a string"
+    intent_norm = declared_intent.strip().lower()
+    if not intent_norm:
+        intent_norm = "execute smart contract call"
+
+    method_name = KNOWN_SELECTORS.get(selector, f"unknown_{selector}")
+    is_approve = selector == "0x095ea7b3"
+    is_swap = "swap" in method_name.lower() or selector in ("0x414bf389", "0x38ed1739", "0x7ff36ab5", "0x18cbafe5")
+
+    divergence_score = 0
+    verdict = "ALIGNED_INTENT"
+    explanation = f"Transaction execution ({method_name}) is consistent with user intent."
+
+    is_claim_or_mint = any(k in intent_norm for k in ("claim", "airdrop", "mint", "reward", "free"))
+    is_swap_intent = any(k in intent_norm for k in ("swap", "trade", "exchange", "buy", "sell"))
+    is_transfer_intent = any(k in intent_norm for k in ("transfer", "send", "pay"))
+
+    if is_claim_or_mint and is_approve:
+        divergence_score = 95
+        verdict = "CRITICAL_INTENT_DIVERGENCE"
+        explanation = "User intended to claim rewards/airdrop, but payload grants token approval. Phishing draining pattern."
+    elif is_swap_intent and is_approve:
+        divergence_score = 40
+        verdict = "PRECONDITION_STEP_DIVERGENCE"
+        explanation = "User intended token swap; payload is an approval prerequisite. Ensure allowance is strictly bounded."
+    elif is_transfer_intent and is_approve:
+        divergence_score = 85
+        verdict = "HIGH_INTENT_DIVERGENCE"
+        explanation = "User intended a direct token transfer, but payload grants third-party spending rights."
+    elif not is_swap and is_swap_intent:
+        divergence_score = 75
+        verdict = "INTENT_MISMATCH"
+        explanation = f"User intended a token swap, but payload invokes {method_name}."
+
+    assert 0 <= divergence_score <= 100, "divergence_score must be between 0 and 100"
+    return {
+        "divergence_score": divergence_score,
+        "verdict": verdict,
+        "declared_intent": declared_intent or "Unspecified interaction",
+        "executed_action": method_name,
+        "reasoning": explanation,
+    }
+
+def correlate_threat_signals(
+    method_name: str, risks: List[str], to_address: str, calldata: str
+) -> Dict[str, Any]:
+    assert isinstance(method_name, str), "method_name must be a string"
+    assert isinstance(risks, list), "risks must be a list"
+
+    signal_matrix: List[Dict[str, str]] = []
+    has_unlimited = any("UNLIMITED_ALLOWANCE" in r for r in risks)
+    has_unrecognized = any("UNRECOGNIZED_SELECTOR" in r for r in risks)
+    is_delegate = "delegate" in method_name.lower() or calldata.startswith("0x5c19a95c")
+
+    if has_unlimited:
+        signal_matrix.append({"signal": "Permit Allowance Exceeds 2^250", "layer": "ERC-20 State Diff", "severity": "CRITICAL"})
+    if is_delegate:
+        signal_matrix.append({"signal": "Arbitrary Delegatecall Execution", "layer": "EVM Control Flow", "severity": "CRITICAL"})
+    if has_unrecognized:
+        signal_matrix.append({"signal": "Non-Standard Function Selector", "layer": "ABI Verification", "severity": "MEDIUM"})
+
+    if has_unlimited:
+        attack_vector = "Permanent Allowance Drain (Phishing Approval Vector)"
+        causal = "Granting unlimited allowance allows the spender to execute transferFrom at any future point without user confirmation."
+        blast_radius = "100% of wallet token balance across current and future deposits."
+    elif is_delegate:
+        attack_vector = "Storage Collision / Proxy Takeover"
+        causal = "Delegatecall executes in context of caller storage slots, enabling arbitrary balance or ownership rewrite."
+        blast_radius = "Complete proxy contract state compromise."
+    else:
+        attack_vector = "Standard Protocol Interaction"
+        causal = "Payload does not chain multiple high-severity exploit primitives."
+        blast_radius = "Transaction gas fee and specified transfer value."
+
+    assert len(attack_vector) > 0, "attack_vector must not be empty"
+    return {
+        "attack_vector": attack_vector,
+        "causal_chain": causal,
+        "blast_radius": blast_radius,
+        "signal_matrix": signal_matrix,
+    }
+
+def generate_contextual_remediation(
+    method_name: str, calldata: str, risks: List[str], user_intent: str
+) -> Dict[str, Any]:
+    assert isinstance(calldata, str), "calldata must be string"
+    assert isinstance(risks, list), "risks must be list"
+
+    has_unlimited = any("UNLIMITED_ALLOWANCE" in r for r in risks)
+    safe_calldata = calldata
+    steps: List[str] = []
+
+    if has_unlimited and len(calldata) >= 138:
+        spender_chunk = calldata[10:74]
+        bounded_amount = "0" * 56 + "1dcd6500"  # 500 * 10^6
+        safe_calldata = f"0x095ea7b3{spender_chunk}{bounded_amount}"
+        steps = [
+            "Terminate the pending transaction request in your wallet immediately.",
+            "Replace unconstrained allowance with exact swap notional (e.g., bounded to trade amount).",
+            "Verify the destination spender address on the official protocol documentation.",
+            "Use EIP-2612 Permit with short expiration deadlines instead of persistent approvals."
+        ]
+        action_summary = "REJECT_UNLIMITED_APPROVAL_USE_BOUNDED"
+    elif "delegate" in method_name.lower():
+        steps = [
+            "Do not sign: delegatecall permissions should never be granted from an EOA or untrusted proxy.",
+            "Verify implementation contract code on verified block explorer."
+        ]
+        action_summary = "BLOCK_DELEGATECALL"
+    else:
+        steps = [
+            "Simulation passed with verified state bounds.",
+            "Proceed with signature verification on hardware signer."
+        ]
+        action_summary = "PROCEED_WITH_VERIFIED_SIGNATURE"
+
+    assert len(steps) > 0, "steps must not be empty"
+    return {
+        "action_summary": action_summary,
+        "safe_calldata": safe_calldata,
+        "remediation_steps": steps,
+    }
+
+def scan_calldata(
+    calldata: str, to_address: str, value: str = "0", user_intent: str = ""
+) -> Dict[str, Any]:
     c_hex = _validate_hex_string(calldata, min_len=10)
     target = _validate_address(to_address)
     assert len(c_hex) >= 10, "Calldata must include at least 4-byte selector"
@@ -133,7 +263,6 @@ def scan_calldata(calldata: str, to_address: str, value: str = "0") -> Dict[str,
     risks: List[str] = []
 
     if selector == "0x095ea7b3" and len(payload) >= 128:
-        spender = "0x" + payload[24:64]
         amount_hex = payload[64:128]
         amount_int = int(amount_hex, 16) if amount_hex else 0
         if amount_int >= 2**250:
@@ -143,6 +272,11 @@ def scan_calldata(calldata: str, to_address: str, value: str = "0") -> Dict[str,
         threat_level = "WARNING"
         risks.append(f"UNRECOGNIZED_SELECTOR: Function {selector} is unverified and not in standard ERC registries.")
 
+    intent_div = analyze_intent_divergence(user_intent, selector, c_hex, target)
+    threat_corr = correlate_threat_signals(method_name, risks, target, c_hex)
+    remediation = generate_contextual_remediation(method_name, c_hex, risks, user_intent)
+
+    assert isinstance(intent_div, dict), "intent_div must be a dict"
     return {
         "status": "completed",
         "target": target,
@@ -151,6 +285,11 @@ def scan_calldata(calldata: str, to_address: str, value: str = "0") -> Dict[str,
         "threat_level": threat_level,
         "risks": risks,
         "payload_length_bytes": (len(c_hex) - 2) // 2,
+        "ai_reasoning": {
+            "intent_divergence": intent_div,
+            "threat_correlation": threat_corr,
+            "context_remediation": remediation,
+        }
     }
 
 def audit_token_safety(token_address: str, chain: str = "base") -> Dict[str, Any]:

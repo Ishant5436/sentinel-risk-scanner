@@ -17,7 +17,7 @@
         </div>
         <div class="brand-title-row">
           <span class="brand-title">Sentinel</span>
-          <span class="hud-badge">v1.0.8</span>
+          <span class="hud-badge">v1.0.9</span>
         </div>
       </div>
 
@@ -25,7 +25,7 @@
       <nav class="nav-segment-bar">
         <button class="nav-tab active" data-tab="tab-calldata">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Calldata</span>
+          <span>Calldata & AI</span>
         </button>
         <button class="nav-tab" data-tab="tab-token">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
@@ -71,46 +71,63 @@
       </div>
       <span class="ribbon-sep">&middot;</span>
       <div class="ribbon-stat-item">
-        <span class="ribbon-stat-label">Checks:</span>
-        <span class="ribbon-stat-val font-mono" id="ribbon-coverage">14 / 14</span>
+        <span class="ribbon-stat-label">AI Checks:</span>
+        <span class="ribbon-stat-val font-mono" id="ribbon-coverage">17 / 17</span>
       </div>
     </section>
 
     <!-- Main Viewport Panels -->
     <div class="hud-viewport">
-      <!-- PANEL 1: CALLDATA INSPECTOR -->
+      <!-- PANEL 1: CALLDATA INSPECTOR & AI REASONING -->
       <section class="hud-panel active" id="tab-calldata">
         <div class="panel-glass-surface">
           <div class="panel-headline-row">
             <div>
-              <h2 class="panel-heading">Pre-Execution Calldata Threat Analysis</h2>
-              <p class="panel-subheading">Decompile selectors, inspect parameter bounds, and detect drain permissions.</p>
+              <h2 class="panel-heading">AI Intent Reasoning & Calldata Threat Diagnostic</h2>
+              <p class="panel-subheading">Cross-reference declared user intent with low-level EVM bytecode to expose phishing drainers and correlate multi-signal exploits.</p>
             </div>
             <button class="action-btn-primary" id="btn-scan-calldata">
               <span class="btn-spinner" id="calldata-spinner"></span>
               <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span>Scan Calldata</span>
+              <span>Scan & Reason</span>
             </button>
           </div>
 
           <!-- Quick Presets -->
           <div class="preset-section">
-            <span class="preset-label">Presets:</span>
+            <span class="preset-label">Simulation Presets:</span>
             <div class="preset-chips-wrap">
-              <button class="preset-chip active" id="preset-unlimited-approval">Unlimited Approval</button>
-              <button class="preset-chip" id="preset-permit2">Permit2 Transfer</button>
-              <button class="preset-chip" id="preset-safe-swap">Uniswap V3 Swap</button>
-              <button class="preset-chip" id="preset-suspicious-delegate">Upgrade Delegate</button>
+              <button class="preset-chip active" id="preset-unlimited-approval">Airdrop Drainer (Phishing)</button>
+              <button class="preset-chip" id="preset-safe-swap">Legitimate Uniswap V3 Swap</button>
+              <button class="preset-chip" id="preset-permit2">Permit2 Batch Transfer</button>
+              <button class="preset-chip" id="preset-suspicious-delegate">Proxy Storage Hijack</button>
             </div>
           </div>
 
-          <!-- Input Fields -->
+          <!-- Input Fields with Intent Layer -->
           <div class="form-grid">
+            <div class="form-field intent-field-container">
+              <div class="label-row">
+                <label class="field-label" for="input-user-intent">Declared User Intent (Natural Language)</label>
+                <span class="ai-pill-badge">AI Reasoner Core</span>
+              </div>
+              <div class="field-input-wrap">
+                <input type="text" id="input-user-intent" class="hud-input" value="Claim Community Airdrop & Rewards" placeholder="e.g. Swap 500 USDC on Uniswap, Claim protocol airdrop..." spellcheck="false" />
+              </div>
+              <div class="intent-chips-wrap">
+                <span class="intent-chips-label">Quick Intent:</span>
+                <button type="button" class="intent-chip active" data-intent="Claim Community Airdrop & Rewards">Claim Airdrop</button>
+                <button type="button" class="intent-chip" data-intent="Swap 500 USDC on Uniswap V3">Swap 500 USDC</button>
+                <button type="button" class="intent-chip" data-intent="Mint Free Commemorative NFT">Mint NFT</button>
+                <button type="button" class="intent-chip" data-intent="Stake into Yield Liquidity Pool">Stake Pool</button>
+              </div>
+            </div>
+
             <div class="form-field">
               <label class="field-label" for="input-to-address">Contract Destination Address</label>
               <div class="field-input-wrap">
                 <input type="text" id="input-to-address" class="hud-input font-mono" value="0x4200000000000000000000000000000000000006" placeholder="0x..." spellcheck="false" />
-                <span class="field-aux">L2 Gas Token</span>
+                <span class="field-aux">Target Contract</span>
               </div>
             </div>
 
@@ -255,6 +272,9 @@
         </button>
       </div>
     </footer>
+
+    <!-- Toast Notification Container -->
+    <div id="sentinel-toast-container" class="sentinel-toast-container"></div>
   </div>
 
   <script src="anna-tool-ids.js" defer></script>

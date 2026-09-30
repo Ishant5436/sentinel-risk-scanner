@@ -1,6 +1,6 @@
 {
   "name": "tool-dev-sentinel-risk-scanner",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "tools": [
     {
       "name": "ping",
@@ -28,6 +28,10 @@
           "value": {
             "type": "string",
             "description": "ETH/native value in wei (default: 0)"
+          },
+          "user_intent": {
+            "type": "string",
+            "description": "Natural language transaction intent declared by user for divergence analysis"
           }
         },
         "required": [

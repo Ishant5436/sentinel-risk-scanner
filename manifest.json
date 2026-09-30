@@ -1,12 +1,21 @@
 {
   "schema": 2,
+  "permissions": [
+    "tools.invoke",
+    "chat.write_message",
+    "storage.read",
+    "storage.write",
+    "ui.svg"
+  ],
   "required_executas": [
     {
       "tool_id": "bundled:sentinel-risk-scanner",
       "version": "latest"
     }
   ],
-  "tags": ["security", "web3", "evm", "scanner", "audit"],
+  "system_prompt_addendum": "The user has Sentinel Web3 Risk Scanner open. When inspecting EVM calldata, smart contracts, or transaction reverts, leverage Sentinel's AI Security Reasoning Engine to perform intent divergence analysis, correlate multi-signal exploit vectors, and suggest safe bounded calldata remediations.",
+  "user_message_prefix_template": "[Sentinel Security] {user_message}",
+  "tags": ["security", "web3", "evm", "scanner", "audit", "ai-reasoning"],
   "ui": {
     "bundle": {
       "format": "static-spa",
