@@ -3,6 +3,7 @@
   "permissions": [
     "tools.invoke",
     "chat.write_message",
+    "llm.complete",
     "storage.read",
     "storage.write",
     "ui.svg"
@@ -35,6 +36,7 @@
     "host_api": {
       "tools": ["required:bundled:sentinel-risk-scanner"],
       "chat": ["write_message"],
+      "llm": ["complete"],
       "storage": ["get", "set"],
       "window": ["set_title", "ready"]
     },

@@ -17,7 +17,7 @@
         </div>
         <div class="brand-title-row">
           <span class="brand-title">Sentinel</span>
-          <span class="hud-badge">v1.0.9</span>
+          <span class="hud-badge">v1.1.0</span>
         </div>
       </div>
 
@@ -143,6 +143,31 @@
           <!-- Analysis Results Stage -->
           <div class="result-stage" id="calldata-result">
             <!-- Dynamically populated by app.js -->
+          </div>
+
+          <!-- Interactive AI Security Assistant (Direct Host LLM) -->
+          <div class="ai-copilot-section" style="margin-top: 16px; padding: 14px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="ai-pill-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px;">Anna AI OS Copilot</span>
+                <span style="font-size: 12px; font-weight: 600; color: #e2e8f0;">Ask AI Security Reasoner</span>
+              </div>
+              <span style="font-size: 10px; color: #94a3b8;">Direct host LLM integration</span>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="text" id="input-ai-prompt" class="hud-input" placeholder="e.g. Explain why this approval is dangerous, or ask about reentrancy..." style="flex: 1;" />
+              <button class="action-btn-primary" id="btn-ask-ai" style="padding: 6px 14px; font-size: 11px;">
+                <span class="btn-spinner" id="ask-ai-spinner" style="display: none;"></span>
+                <span>Ask AI</span>
+              </button>
+            </div>
+            <div class="preset-chips-wrap" style="margin-bottom: 10px;">
+              <span style="font-size: 10px; color: #64748b; margin-right: 4px;">Suggestions:</span>
+              <button type="button" class="preset-chip ai-prompt-chip" data-prompt="Why is an unlimited approval dangerous for my wallet?">Why is unlimited approval risky?</button>
+              <button type="button" class="preset-chip ai-prompt-chip" data-prompt="How do I safely revoke token allowances on Base?">How to revoke approvals?</button>
+              <button type="button" class="preset-chip ai-prompt-chip" data-prompt="Explain the difference between EIP-2612 Permit and standard approval.">Permit vs Approve</button>
+            </div>
+            <div id="ai-copilot-output" style="display: none; padding: 12px; border-radius: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(59, 130, 246, 0.2); font-size: 12px; line-height: 1.5; color: #cbd5e1;"></div>
           </div>
         </div>
       </section>

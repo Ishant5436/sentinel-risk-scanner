@@ -11,69 +11,93 @@ import sys
 import re
 from typing import Dict, Any, List
 
-MANIFEST = {
-    "name": "tool-dev-sentinel-risk-scanner",
-    "version": "1.0.8",
+MANIFEST: Dict[str, Any] = {
+    "name": "sentinel-risk-scanner",
+    "display_name": "Sentinel Risk Scanner",
+    "version": "1.1.0",
+    "description": (
+        "Real-time pre-execution calldata decoding, honeypot detection, and revert diagnostics for EVM transactions."
+    ),
+    "author": "Ishant Panchal",
+    "homepage": "https://github.com/Ishant5436/sentinel-risk-scanner",
+    "license": "MIT",
+    "tags": ["security", "web3", "evm", "scanner", "audit", "ai-reasoning"],
     "tools": [
         {
             "name": "ping",
             "description": "Health and smoke-test ping probe.",
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "additionalProperties": False,
-            },
+            "parameters": [],
         },
         {
             "name": "scan_calldata",
             "description": "Pre-execution calldata inspection and threat detection for EVM transactions.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "calldata": {"type": "string", "description": "Raw hex calldata payload starting with 0x"},
-                    "to_address": {"type": "string", "description": "Destination smart contract address"},
-                    "value": {"type": "string", "description": "ETH/native value in wei (default: 0)"},
-                    "user_intent": {"type": "string", "description": "User intended action for AI intent divergence analysis"}
+            "parameters": [
+                {
+                    "name": "calldata",
+                    "type": "string",
+                    "description": "Raw hex calldata payload starting with 0x",
+                    "required": True,
                 },
-                "required": ["calldata", "to_address"],
-                "additionalProperties": False,
-            },
+                {
+                    "name": "to_address",
+                    "type": "string",
+                    "description": "Destination smart contract address",
+                    "required": True,
+                },
+                {
+                    "name": "value",
+                    "type": "string",
+                    "description": "ETH/native value in wei (default: 0)",
+                    "required": False,
+                    "default": "0",
+                },
+                {
+                    "name": "user_intent",
+                    "type": "string",
+                    "description": "User intended action for AI intent divergence analysis",
+                    "required": False,
+                    "default": "",
+                },
+            ],
         },
         {
             "name": "audit_token_safety",
             "description": "Audit token contract for honeypot, blacklist, transfer tax, and owner privilege risks.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "token_address": {"type": "string", "description": "Token ERC-20 contract address"},
-                    "chain": {"type": "string", "description": "Chain identifier (e.g. base, ethereum, arbitrum)"}
+            "parameters": [
+                {
+                    "name": "token_address",
+                    "type": "string",
+                    "description": "Token ERC-20 contract address",
+                    "required": True,
                 },
-                "required": ["token_address"],
-                "additionalProperties": False,
-            },
+                {
+                    "name": "chain",
+                    "type": "string",
+                    "description": "Chain identifier (e.g. base, ethereum, arbitrum)",
+                    "required": False,
+                    "default": "base",
+                },
+            ],
         },
         {
             "name": "explain_revert",
             "description": "Translate raw EVM revert hex data into human-readable diagnostics and remedies.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "error_data": {"type": "string", "description": "Raw hex return data from reverted call"}
+            "parameters": [
+                {
+                    "name": "error_data",
+                    "type": "string",
+                    "description": "Raw hex return data from reverted call",
+                    "required": True,
                 },
-                "required": ["error_data"],
-                "additionalProperties": False,
-            },
+            ],
         },
         {
             "name": "get_security_telemetry",
             "description": "Retrieve active security telemetry, gas protected, and threat counters.",
-            "parameters": {
-                "type": "object",
-                "properties": {},
-                "additionalProperties": False,
-            },
-        }
+            "parameters": [],
+        },
     ],
+    "runtime": {"type": "uv", "min_version": "0.1.0"},
 }
 
 KNOWN_SELECTORS: Dict[str, str] = {
@@ -398,38 +422,66 @@ def invoke(method: str, args: dict) -> dict:
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+def handle_rpc_request(req: Dict[str, Any]) -> Dict[str, Any]:
+    assert isinstance(req, dict), "RPC request must be a dictionary"
+    req_id = req.get("id")
+    method = req.get("method")
+    params = req.get("params") or {}
+    assert isinstance(params, dict), "RPC params must be a dictionary"
+
+    try:
+        if method == "initialize":
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {
+                    "protocolVersion": params.get("protocolVersion", "2.0"),
+                    "serverInfo": {"name": "sentinel-risk-scanner", "version": MANIFEST["version"]},
+                    "capabilities": {}
+                }
+            }
+        if method == "describe":
+            return {"jsonrpc": "2.0", "id": req_id, "result": MANIFEST}
+        if method == "health":
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": {
+                    "status": "healthy",
+                    "version": MANIFEST["version"],
+                    "tools_count": len(MANIFEST["tools"])
+                }
+            }
+        if method == "invoke":
+            t = params.get("tool") or params.get("name") or params.get("method") or "scan_calldata"
+            a = params.get("arguments") or params.get("args") or params.get("parameters")
+            if a is None or not isinstance(a, dict):
+                a = {k: v for k, v in params.items() if k not in ("tool", "name", "method", "tool_id", "timeoutMs")}
+            res = invoke(t, a)
+            return {"jsonrpc": "2.0", "id": req_id, "result": res}
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "error": {"code": -32601, "message": f"method not found: {method}"}
+        }
+    except Exception as exc:
+        return {
+            "jsonrpc": "2.0",
+            "id": req_id,
+            "error": {"code": -32000, "message": str(exc)}
+        }
+
 def main() -> None:
     for line in sys.stdin:
-        line = line.strip()
-        if not line:
+        clean_line = line.strip()
+        if not clean_line:
             continue
-        req = json.loads(line)
         try:
-            if req.get("method") == "describe":
-                result = MANIFEST
-            elif req.get("method") == "health":
-                result = {"status": "ready"}
-            elif req.get("method") == "invoke":
-                p = req.get("params") or {}
-                t = p.get("tool") or p.get("name") or p.get("method") or "scan_calldata"
-                a = p.get("arguments") or p.get("args") or p.get("parameters")
-                if a is None or not isinstance(a, dict):
-                    a = {k: v for k, v in p.items() if k not in ("tool", "name", "method", "tool_id", "timeoutMs")}
-                result = invoke(t, a)
-            else:
-                raise ValueError(f"unknown rpc: {req.get('method')}")
-            sys.stdout.write(json.dumps({"jsonrpc": "2.0", "id": req.get("id"), "result": result}) + "\n")
-        except Exception as e:
-            sys.stdout.write(
-                json.dumps(
-                    {
-                        "jsonrpc": "2.0",
-                        "id": req.get("id"),
-                        "error": {"code": -32601, "message": str(e)},
-                    }
-                )
-                + "\n"
-            )
+            req = json.loads(clean_line)
+            resp = handle_rpc_request(req)
+        except Exception as exc:
+            resp = {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": f"parse error: {exc}"}}
+        sys.stdout.write(json.dumps(resp, ensure_ascii=False) + "\n")
         sys.stdout.flush()
 
 if __name__ == "__main__":

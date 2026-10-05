@@ -133,3 +133,34 @@ def test_scan_calldata_ai_reasoning_precondition_approval():
     assert div["verdict"] == "PRECONDITION_STEP_DIVERGENCE"
     assert div["divergence_score"] == 40
 
+def test_manifest_schema_compliance():
+    from sentinel_risk_scanner_plugin import MANIFEST
+    assert "name" in MANIFEST, "MANIFEST must have name"
+    assert "display_name" in MANIFEST, "MANIFEST must have display_name (required by Anna protocol)"
+    assert MANIFEST["display_name"] == "Sentinel Risk Scanner"
+    assert MANIFEST["version"] == "1.1.0"
+    assert isinstance(MANIFEST["tools"], list)
+    for tool in MANIFEST["tools"]:
+        assert "name" in tool
+        assert "description" in tool
+        assert isinstance(tool["parameters"], list), f"tool {tool['name']} parameters must be a list"
+        for p in tool["parameters"]:
+            assert "name" in p
+            assert "type" in p
+            assert "description" in p
+            assert "required" in p
+
+def test_protocol_dispatcher_methods():
+    from sentinel_risk_scanner_plugin import handle_rpc_request
+    # Initialize v2 handshake
+    init_req = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2.0"}}
+    init_res = handle_rpc_request(init_req)
+    assert init_res["result"]["protocolVersion"] == "2.0"
+    assert init_res["result"]["serverInfo"]["name"] == "sentinel-risk-scanner"
+
+    # Describe method
+    desc_req = {"jsonrpc": "2.0", "id": 2, "method": "describe", "params": {}}
+    desc_res = handle_rpc_request(desc_req)
+    assert "result" in desc_res
+    assert desc_res["result"]["display_name"] == "Sentinel Risk Scanner"
+

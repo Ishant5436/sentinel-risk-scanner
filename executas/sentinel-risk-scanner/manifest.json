@@ -1,92 +1,89 @@
 {
-  "name": "tool-dev-sentinel-risk-scanner",
-  "version": "1.0.9",
+  "name": "sentinel-risk-scanner",
+  "display_name": "Sentinel Risk Scanner",
+  "version": "1.1.0",
+  "description": "Real-time pre-execution calldata decoding, honeypot detection, and revert diagnostics for EVM transactions.",
+  "author": "Ishant Panchal",
+  "homepage": "https://github.com/Ishant5436/sentinel-risk-scanner",
+  "license": "MIT",
+  "tags": ["security", "web3", "evm", "scanner", "audit", "ai-reasoning"],
   "tools": [
     {
       "name": "ping",
       "description": "Health and smoke-test ping probe.",
-      "parameters": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": false
-      }
+      "parameters": []
     },
     {
       "name": "scan_calldata",
       "description": "Pre-execution calldata inspection and threat detection for EVM transactions.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "calldata": {
-            "type": "string",
-            "description": "Raw hex calldata payload starting with 0x"
-          },
-          "to_address": {
-            "type": "string",
-            "description": "Destination smart contract address"
-          },
-          "value": {
-            "type": "string",
-            "description": "ETH/native value in wei (default: 0)"
-          },
-          "user_intent": {
-            "type": "string",
-            "description": "Natural language transaction intent declared by user for divergence analysis"
-          }
+      "parameters": [
+        {
+          "name": "calldata",
+          "type": "string",
+          "description": "Raw hex calldata payload starting with 0x",
+          "required": true
         },
-        "required": [
-          "calldata",
-          "to_address"
-        ],
-        "additionalProperties": false
-      }
+        {
+          "name": "to_address",
+          "type": "string",
+          "description": "Destination smart contract address",
+          "required": true
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "description": "ETH/native value in wei (default: 0)",
+          "required": false,
+          "default": "0"
+        },
+        {
+          "name": "user_intent",
+          "type": "string",
+          "description": "User intended action for AI intent divergence analysis",
+          "required": false,
+          "default": ""
+        }
+      ]
     },
     {
       "name": "audit_token_safety",
       "description": "Audit token contract for honeypot, blacklist, transfer tax, and owner privilege risks.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "token_address": {
-            "type": "string",
-            "description": "Token ERC-20 contract address"
-          },
-          "chain": {
-            "type": "string",
-            "description": "Chain identifier (e.g. base, ethereum, arbitrum)"
-          }
+      "parameters": [
+        {
+          "name": "token_address",
+          "type": "string",
+          "description": "Token ERC-20 contract address",
+          "required": true
         },
-        "required": [
-          "token_address"
-        ],
-        "additionalProperties": false
-      }
+        {
+          "name": "chain",
+          "type": "string",
+          "description": "Chain identifier (e.g. base, ethereum, arbitrum)",
+          "required": false,
+          "default": "base"
+        }
+      ]
     },
     {
       "name": "explain_revert",
       "description": "Translate raw EVM revert hex data into human-readable diagnostics and remedies.",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "error_data": {
-            "type": "string",
-            "description": "Raw hex return data from reverted call"
-          }
-        },
-        "required": [
-          "error_data"
-        ],
-        "additionalProperties": false
-      }
+      "parameters": [
+        {
+          "name": "error_data",
+          "type": "string",
+          "description": "Raw hex return data from reverted call",
+          "required": true
+        }
+      ]
     },
     {
       "name": "get_security_telemetry",
       "description": "Retrieve active security telemetry, gas protected, and threat counters.",
-      "parameters": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": false
-      }
+      "parameters": []
     }
-  ]
+  ],
+  "runtime": {
+    "type": "uv",
+    "min_version": "0.1.0"
+  }
 }

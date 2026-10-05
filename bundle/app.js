@@ -147,6 +147,38 @@ document.querySelectorAll(".nav-tab").forEach(btn => {
   });
 });
 
+async function callAnnaLLM(messages, maxTokens = 800) {
+  const annaObj = (typeof window !== "undefined" && window.anna) || anna;
+  if (annaObj && annaObj.llm && typeof annaObj.llm.complete === "function") {
+    try {
+      const reply = await annaObj.llm.complete({
+        messages: messages,
+        maxTokens: maxTokens,
+      });
+      if (reply && reply.content && reply.content.text) {
+        return reply.content.text;
+      }
+    } catch (err) {
+      console.warn("Anna LLM complete invocation failed, using fallback:", err);
+    }
+  }
+  return null;
+}
+
+function generateLocalFallbackSecurityAdvice(query) {
+  const q = (query || "").toLowerCase();
+  if (q.includes("unlimited") || q.includes("approval") || q.includes("allowance")) {
+    return "• Unlimited token approvals grant a smart contract permission to transfer all current and future tokens of that type from your wallet.\n• If the contract is upgraded, hacked, or belongs to a malicious actor, your entire balance can be drained via transferFrom.\n• Remediation: Always specify an exact bounded allowance equal to your trade amount or use EIP-2612 Permit signatures with short expiration times.";
+  }
+  if (q.includes("revoke")) {
+    return "• To revoke allowances on Base or Ethereum, submit an approval transaction with amount = 0 to the target token contract.\n• You can also use verified tools like Revoke.cash or BaseScan Token Approvals to audit all active allowances and submit revoke transactions in batch.";
+  }
+  if (q.includes("permit")) {
+    return "• Standard Approve requires an on-chain transaction that costs gas and sets a persistent allowance on the ERC-20 contract.\n• EIP-2612 Permit uses an off-chain cryptographic signature (EIP-712) that includes an exact nonce, deadline, and spender. It requires no gas from the user to approve and automatically expires after the deadline.";
+  }
+  return `• Pre-flight security assessment for query: "${query}"\n• Verify contract address authenticity on verified block explorer.\n• Never sign unverified permit or approval messages from unverified dApps.\n• Ensure transfer allowances are strictly bounded to the exact trade amount.`;
+}
+
 async function callAnnaTool(method, args = {}) {
   if (anna && anna.tools && typeof anna.tools.invoke === "function") {
     try {
@@ -913,6 +945,48 @@ document.getElementById("btn-audit-token")?.addEventListener("click", triggerTok
 document.getElementById("btn-explain-revert")?.addEventListener("click", triggerRevertDecode);
 document.getElementById("btn-refresh-telemetry")?.addEventListener("click", renderTelemetry);
 
+// Interactive AI Copilot Query Trigger
+document.getElementById("btn-ask-ai")?.addEventListener("click", async () => {
+  const promptInput = document.getElementById("input-ai-prompt");
+  const output = document.getElementById("ai-copilot-output");
+  const spinner = document.getElementById("ask-ai-spinner");
+  const query = promptInput?.value?.trim();
+  if (!query) return;
+
+  if (spinner) spinner.style.display = "inline-block";
+  if (output) {
+    output.style.display = "block";
+    output.innerHTML = `<span style="color: #94a3b8;">Processing query via Anna AI OS LLM...</span>`;
+  }
+
+  const prompt = `You are Sentinel Web3 Security Copilot running on Anna AI OS. Answer this user security question concisely with institutional precision:\n\n${query}`;
+  const response = await callAnnaLLM([
+    { role: "user", content: { type: "text", text: prompt } }
+  ]);
+
+  if (spinner) spinner.style.display = "none";
+  if (output) {
+    const text = response || generateLocalFallbackSecurityAdvice(query);
+    output.innerHTML = `<div style="margin-bottom: 6px; font-weight: 600; color: #60a5fa; display: flex; align-items: center; gap: 6px;">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>AI Security Response</span>
+    </div>
+    <div style="white-space: pre-wrap;">${escapeHtml(text)}</div>`;
+  }
+});
+
+// AI Suggestions Chips
+document.querySelectorAll(".ai-prompt-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.getAttribute("data-prompt");
+    const input = document.getElementById("input-ai-prompt");
+    if (input && prompt) {
+      input.value = prompt;
+      document.getElementById("btn-ask-ai")?.click();
+    }
+  });
+});
+
 // Post to Anna Chat
 document.getElementById("btn-post-anna-chat")?.addEventListener("click", async (e) => {
   const calldata = document.getElementById("input-calldata").value.trim();
@@ -932,7 +1006,7 @@ document.getElementById("btn-post-anna-chat")?.addEventListener("click", async (
 - **Blast Radius:** ${isUnlimited ? "100% of wallet token balance across current and future deposits." : "Bounded trade notional and network gas fee."}
 - **Remediation Recommendation:** ${isUnlimited ? "REJECT & TERMINATE SIGNING REQUEST. Use exact bounded allowance." : "Safe to proceed with signature verification on hardware signer."}
 
-*Generated by Sentinel Web3 Risk Scanner (AI Reasoning Core v1.0.9)*`;
+*Generated by Sentinel Web3 Risk Scanner (AI Reasoning Core v1.1.0)*`;
 
   const btn = e.currentTarget;
   const originalHtml = btn.innerHTML;
@@ -963,3 +1037,4 @@ window.addEventListener("DOMContentLoaded", () => {
   triggerRevertDecode();
   renderTelemetry();
 });
+
