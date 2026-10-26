@@ -1,5 +1,11 @@
 # Sentinel Web3 Risk Scanner (Anna AI OS)
 
+[![Install on Anna OS](https://img.shields.io/badge/Anna%20OS-Install%20App-10b981?style=for-the-badge&logo=shield&logoColor=white)](https://anna.partners/apps/sentinel-risk-scanner)
+[![Validation](https://img.shields.io/badge/anna--app-validate%20--strict%20passed-success)](https://anna.partners)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+![Sentinel Risk Scanner](assets/cover.png)
+
 AI-Native Web3 Security Intelligence, Transaction Intent Reasoning, and Pre-Execution Threat Diagnostic Engine for the Anna AI OS desktop and chat agent.
 
 ## Core Capabilities
