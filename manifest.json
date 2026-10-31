@@ -41,23 +41,50 @@
         "name": "main",
         "title": "Sentinel Risk Scanner",
         "default": true,
-        "default_size": { "w": 1020, "h": 760 },
-        "min_size": { "w": 780, "h": 540 },
-        "max_size": { "w": 1400, "h": 950 }
+        "default_size": {
+          "w": 1020,
+          "h": 760
+        },
+        "min_size": {
+          "w": 780,
+          "h": 540
+        },
+        "max_size": {
+          "w": 1400,
+          "h": 950
+        }
       }
     ],
     "host_api": {
-      "tools": ["required:bundled:sentinel-risk-scanner"],
-      "chat": ["write_message"],
-      "llm": ["complete"],
-      "storage": ["get", "set"],
-      "window": ["set_title", "ready"]
+      "tools": [
+        "required:bundled:sentinel-risk-scanner"
+      ],
+      "chat": [
+        "write_message"
+      ],
+      "llm": [
+        "complete"
+      ],
+      "storage": [
+        "get",
+        "set"
+      ],
+      "window": [
+        "set_title",
+        "ready"
+      ]
     },
     "csp_overrides": {},
-    "state_merge": "last_writer_wins"
+    "state_merge": "last_writer_wins",
+    "form_factors": [
+      "desktop",
+      "mobile"
+    ]
   },
   "dev": {
-    "fixtures": ["fixtures/*.jsonl"],
+    "fixtures": [
+      "fixtures/*.jsonl"
+    ],
     "seed_storage": {},
     "user_id": 1
   }
